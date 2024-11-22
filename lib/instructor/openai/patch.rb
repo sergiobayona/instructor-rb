@@ -8,7 +8,6 @@ module Instructor
     # The `Patch` module provides methods for patching and modifying the OpenAI client behavior.
     module Patch
       include Instructor::Base::Patch
-
       # Sends a chat request to the API and processes the response.
       #
       # @param parameters [Hash] The parameters for the chat request as expected by the OpenAI client.
@@ -17,15 +16,15 @@ module Instructor
       # @param validation_context [Hash] The validation context for the parameters. Optional.
       # @return [Object] The processed response.
       def chat(parameters:, response_model: nil, max_retries: 0, validation_context: nil)
-        return json_post(path: '/chat/completions', parameters:) if response_model.nil?
+        return super(parameters:) if response_model.nil?
 
         with_retries(max_retries, [JSON::ParserError, Instructor::ValidationError, Faraday::ParsingError]) do
           model = determine_model(response_model)
           function = build_function(model)
           parameters = prepare_parameters(parameters, validation_context, function)
-          tool_choice = resolve_tool_choice(function[:function][:name])
-          parameters.merge!(tool_choice:)
-          response = json_post(path: '/chat/completions', parameters:)
+          tool_choice = resolve_tool_choice(function_name(function))
+          parameters.merge!(tool_choice:) if tool_choice
+          response = super(parameters:)
           process_response(response, model)
         end
       end
@@ -41,6 +40,10 @@ module Instructor
       end
 
       private
+
+      def function_name(function)
+        function[:function][:name]
+      end
 
       def resolve_tool_choice(function_name)
         case Instructor.mode
