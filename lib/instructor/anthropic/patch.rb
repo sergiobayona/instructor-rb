@@ -10,7 +10,7 @@ module Instructor
     module Patch
       include Instructor::Base::Patch
 
-      # Sends a message request to the API and processes the response.
+      # Sends a chat request to the API and processes the response.
       #
       # @param parameters [Hash] The parameters for the chat request as expected by the OpenAI client.
       # @param response_model [Class] The response model class.
@@ -18,15 +18,37 @@ module Instructor
       # @param validation_context [Hash] The validation context for the parameters. Optional.
       # @return [Object] The processed response.
       def messages(parameters:, response_model: nil, max_retries: 0, validation_context: nil)
+        return super(parameters:) if response_model.nil?
+
         with_retries(max_retries, [JSON::ParserError, Instructor::ValidationError, Faraday::ParsingError]) do
           model = determine_model(response_model)
           function = build_function(model)
-          parameters[:max_tokens] = 1024 unless parameters.key?(:max_tokens)
+          set_max_tokens(parameters)
           parameters = prepare_parameters(parameters, validation_context, function)
-          ::Anthropic.configuration.extra_headers = { 'anthropic-beta' => 'tools-2024-04-04' }
-          response = ::Anthropic::Client.json_post(path: '/messages', parameters:)
+          set_extra_headers
+          tool_choice = resolve_tool_choice(function_name(function))
+          parameters.merge!(tool_choice:) if tool_choice
+          response = super(parameters:)
           process_response(response, model)
         end
+      end
+
+      private
+
+      def set_max_tokens(parameters)
+        parameters[:max_tokens] = 1024 unless parameters.key?(:max_tokens)
+      end
+
+      def set_extra_headers
+        ::Anthropic.configuration.extra_headers = { 'anthropic-beta' => 'tools-2024-04-04' }
+      end
+
+      def function_name(function)
+        function[:name]
+      end
+
+      def resolve_tool_choice(function_name)
+        nil
       end
 
       # Processes the API response.

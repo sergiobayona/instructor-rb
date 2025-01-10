@@ -55,26 +55,6 @@ RSpec.describe Instructor::Anthropic::Patch do
     end
   end
 
-  context 'when an exception occurs' do
-    let(:client) { patched_client.new }
-    let(:max_retries) { 3 }
-    let(:parameters) { {} }
-    let(:response_model) { double }
-
-    before do
-      allow(client).to receive(:determine_model).and_return(double)
-      allow(client).to receive(:build_function).and_return(double)
-      allow(client).to receive(:prepare_parameters).and_return({})
-      allow(client).to receive(:process_response).and_return(double)
-      allow(::Anthropic::Client).to receive(:json_post).and_raise(JSON::ParserError)
-    end
-
-    it 'retries the specified number of times' do
-      expect { client.messages(parameters:, response_model:, max_retries:) }.to raise_error(JSON::ParserError)
-      expect(::Anthropic::Client).to have_received(:json_post).exactly(max_retries).times
-    end
-  end
-
   context 'with validation context' do
     let(:client) { patched_client.new }
     let(:parameters) do

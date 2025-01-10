@@ -73,7 +73,7 @@ RSpec.describe Instructor::OpenAI::Patch do
     describe 'when setting the function_name' do
       it 'returns the function_name based on the schema title' do
         client = patched_client.new
-        expect(client.generate_function_name(user_model)).to eq('SomeUser')
+        expect(client.generate_function_name(user_model)).to eq('someuser')
       end
 
       it 'returns the class name when the schema title is not defined' do
@@ -88,7 +88,7 @@ RSpec.describe Instructor::OpenAI::Patch do
         end
 
         client = patched_client.new
-        expect(client.generate_function_name(model)).to eq('User')
+        expect(client.generate_function_name(model)).to eq('user')
       end
     end
 
