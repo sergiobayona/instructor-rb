@@ -18,22 +18,20 @@ module Instructor
       def chat(parameters:, response_model: nil, max_retries: 0, validation_context: nil)
         return super(parameters:) if response_model.nil?
 
-        with_retries(max_retries, [JSON::ParserError, Instructor::ValidationError, Faraday::ParsingError]) do
-          model = determine_model(response_model)
-          if mode.structured_output?
-            schema = build_schema(model)
-            parameters = prepare_response_format(parameters, validation_context, schema)
-          elsif mode.function_calling?
-            function = build_function(model)
-            parameters = prepare_parameters(parameters, validation_context, function)
-            tool_choice = resolve_tool_choice(function_name(function))
-            parameters.merge!(tool_choice:) if tool_choice
-          else
-            raise ArgumentError, 'Invalid mode'
-          end
-          response = super(parameters:)
-          process_response(response, model)
+        model = determine_model(response_model)
+        if mode.structured_output?
+          schema = build_schema(model)
+          parameters = prepare_response_format(parameters, validation_context, schema)
+        elsif mode.function_calling?
+          function = build_function(model)
+          parameters = prepare_parameters(parameters, validation_context, function)
+          tool_choice = resolve_tool_choice(function_name(function))
+          parameters.merge!(tool_choice:) if tool_choice
+        else
+          raise ArgumentError, 'Invalid mode'
         end
+        response = super(parameters:)
+        process_response(response, model)
       end
 
       def mode
@@ -46,7 +44,10 @@ module Instructor
       # @param model [Class] The response model class.
       # @return [Object] The processed response.
       def process_response(response, model)
-        parsed_response = Response.create(response).parse
+        response_object = Response.create(response)
+        raise ArgumentError, response_object.refusal if response_object.refusal.present?
+
+        parsed_response = response_object.parse
         iterable? ? process_multiple_responses(parsed_response, model) : process_single_response(parsed_response, model)
       end
 

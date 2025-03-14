@@ -107,11 +107,20 @@ module Instructor
           chat_completions&.dig(0, 'message', 'content')
         end
 
+        # Returns the refusal from the first chat completion.
+        #
+        # @return [String, nil] The refusal or nil if not found.
+        def refusal
+          chat_completions&.dig(0, 'message', 'refusal')
+        end
+
         # Parses the content as JSON and returns the parsed data.
         #
         # @return [Hash] The parsed JSON data.
         def parse
           JSON.parse(content)
+        rescue StandardError
+          nil
         end
       end
     end
