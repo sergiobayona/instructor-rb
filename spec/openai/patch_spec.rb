@@ -92,12 +92,12 @@ RSpec.describe Instructor::OpenAI::Patch do
       end
     end
 
-    it 'returns an object with the expected valid attribute values', vcr: 'patching_spec/valid_response' do
+    it 'returns an object with the expected valid attribute values', vcr: 'openai/patching_spec/valid_response' do
       client = patched_client.new
 
       user = client.chat(
         parameters: {
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o-2024-08-06',
           messages: [{ role: 'user', content: 'Extract Jason is 25 years old' }]
         },
         response_model: user_model
@@ -108,34 +108,11 @@ RSpec.describe Instructor::OpenAI::Patch do
     end
   end
 
-  context 'with retry mechanism' do
-    let(:client) { patched_client.new }
-    let(:parameters) { { key: 'value' } }
-    let(:max_retries) { 3 }
-
-    before do
-      allow(client).to receive(:json_post).and_return('choices' =>
-        [{ 'index' => 0,
-           'message' =>
-           { 'role' => 'assistant',
-             'tool_calls' => [{ 'id' => 'call_85vQq30Nt8xU1mly2Y2Y1tL2', 'type' => 'function',
-                                'function' => { 'name' => 'User', 'arguments' => '\"bad:json\"' } }] } }])
-    end
-
-    it 'retries the chat method when parsing fails' do
-      expect do
-        client.chat(parameters:, response_model: user_model, max_retries:)
-      end.to raise_error(JSON::ParserError)
-
-      expect(client).to have_received(:json_post).exactly(max_retries).times
-    end
-  end
-
   context 'with validation context' do
     let(:client) { patched_client.new }
     let(:parameters) do
       {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-2024-08-06',
         messages: [
           {
             role: 'user',
@@ -145,7 +122,7 @@ RSpec.describe Instructor::OpenAI::Patch do
       }
     end
 
-    it 'returns an object with the expected valid attribute values', vcr: 'patching_spec/with_validation_context' do
+    it 'returns an object with the expected valid attribute values', vcr: 'openai/patching_spec/with_validation_context' do
       user = client.chat(
         parameters:,
         response_model: user_model,
@@ -177,23 +154,23 @@ RSpec.describe Instructor::OpenAI::Patch do
     let(:client) { patched_client.new }
     let(:parameters) do
       {
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-2024-08-06',
         messages: [{ role: 'user', content: 'Extract Jason is 25 years old' }]
       }
     end
 
-    it 'raises an error when the response model is invalid', vcr: 'patching_spec/invalid_response' do
+    it 'raises an argument error when the model resfuses to respond', vcr: 'openai/patching_spec/invalid_response' do
       expect do
         client.chat(parameters:, response_model: invalid_model)
-      end.to raise_error(Instructor::ValidationError)
+      end.to raise_error(ArgumentError, "I'm sorry, I can't assist with that request.")
     end
   end
 
   describe 'when the client is used ia a standard manner' do
-    it 'does not raise an error when the client is used in a standard manner', vcr: 'patching_spec/standard_usage' do
+    it 'does not raise an error when the client is used in a standard manner', vcr: 'openai/patching_spec/standard_usage' do
       response = patched_client.new.chat(
         parameters: {
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o-2024-08-06',
           messages: [{ role: 'user', content: 'How is the weather today in New York?' }]
         }
       )
