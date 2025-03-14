@@ -9,14 +9,15 @@ module Instructor
   # - tools: select between function, auto, required, and none.
   # more modes will be added in the near future.
   module Mode
-    tool_options = %w[function auto required none].index_by(&:itself)
-    TOOL_BEHAVIOR = OpenStruct.new(tool_options)
+    STRUCTURED_OUTPUT = :structured_output
+    FUNCTION_CALLING = :function_calling
 
-    FUNCTIONS = 'function_call'
-    PARALLEL_TOOLS = 'parallel_tool_call'
-    TOOLS = TOOL_BEHAVIOR
-    JSON = 'json_mode'
-    MD_JSON = 'markdown_json_mode'
-    JSON_SCHEMA = 'json_schema_mode'
+    def self.structured_output?
+      Instructor.mode == STRUCTURED_OUTPUT
+    end
+
+    def self.function_calling?
+      Instructor.mode == FUNCTION_CALLING
+    end
   end
 end

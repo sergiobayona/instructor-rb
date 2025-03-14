@@ -33,7 +33,7 @@ module Instructor
   # @param openai_client [OpenAI::Client] The OpenAI client to be patched.
   # @param mode [Symbol] The mode to be used. Default is `Instructor::Mode::TOOLS.function`.
   # @return [OpenAI::Client] The patched OpenAI client.
-  def self.from_openai(openai_client, mode: Instructor::Mode::TOOLS.function)
+  def self.from_openai(openai_client, mode: :structured_output)
     @mode = mode
     openai_client.prepend(Instructor::OpenAI::Patch)
   end
