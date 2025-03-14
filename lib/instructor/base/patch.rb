@@ -3,7 +3,6 @@
 module Instructor
   module Base
     module Patch
-
       # Generates the function name for the API request.
       # You can customize the function name for the LLM by adding a `title` key to the schema.
       # Example:
@@ -22,9 +21,8 @@ module Instructor
       #  @param model [Class] The response model class.
       #  @return [String] The generated function name.
       def generate_function_name(model)
-        model_name = model.schema.fetch(:title, model.name)
+        model_name = model.json_schema.fetch('title', model.name)
         model_name.gsub('::', '_').gsub(/[^a-zA-Z0-9_]/, '').downcase
-
       end
 
       # Generates the description for the function.
