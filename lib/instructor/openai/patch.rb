@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'instructor/base/patch'
-
 # The Instructor module provides functionality for interacting with OpenAI's chat API.
 module Instructor
   module OpenAI
     # The `Patch` module provides methods for patching and modifying the OpenAI client behavior.
     module Patch
       include Instructor::Base::Patch
+
       # Sends a chat request to the API and processes the response.
       #
       # @param parameters [Hash] The parameters for the chat request as expected by the OpenAI client.
@@ -20,13 +20,24 @@ module Instructor
 
         with_retries(max_retries, [JSON::ParserError, Instructor::ValidationError, Faraday::ParsingError]) do
           model = determine_model(response_model)
-          function = build_function(model)
-          parameters = prepare_parameters(parameters, validation_context, function)
-          tool_choice = resolve_tool_choice(function_name(function))
-          parameters.merge!(tool_choice:) if tool_choice
+          if mode.structured_output?
+            schema = build_schema(model)
+            parameters = prepare_response_format(parameters, validation_context, schema)
+          elsif mode.function_calling?
+            function = build_function(model)
+            parameters = prepare_parameters(parameters, validation_context, function)
+            tool_choice = resolve_tool_choice(function_name(function))
+            parameters.merge!(tool_choice:) if tool_choice
+          else
+            raise ArgumentError, 'Invalid mode'
+          end
           response = super(parameters:)
           process_response(response, model)
         end
+      end
+
+      def mode
+        Instructor::Mode
       end
 
       # Processes the API response.
@@ -35,7 +46,7 @@ module Instructor
       # @param model [Class] The response model class.
       # @return [Object] The processed response.
       def process_response(response, model)
-        parsed_response = Response.new(response).parse
+        parsed_response = Response.create(response).parse
         iterable? ? process_multiple_responses(parsed_response, model) : process_single_response(parsed_response, model)
       end
 
@@ -71,6 +82,23 @@ module Instructor
             parameters: model.json_schema
           }
         }
+      end
+
+      def build_schema(model)
+        {
+          type: 'json_schema',
+          json_schema: {
+            name: generate_function_name(model),
+            schema: model.json_schema,
+            strict: true
+          }
+        }
+      end
+
+      def prepare_response_format(parameters, validation_context, schema)
+        # parameters # fetch the parameters's max_token or set it to 1024
+        parameters = apply_validation_context(parameters, validation_context)
+        parameters.merge(response_format: schema)
       end
     end
   end
