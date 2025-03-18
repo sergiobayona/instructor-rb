@@ -1,0 +1,114 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.openai.com/v1/chat/completions
+    body:
+      encoding: UTF-8
+      string: '{"model":"gpt-4o-2024-08-06","messages":[{"role":"user","content":"How
+        is the weather today in New York?"}]}'
+    headers:
+      Content-Type:
+      - application/json
+      Authorization:
+      - Bearer <OPENAI_KEY_PLACEHOLDER>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 18 Mar 2025 21:22:53 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Access-Control-Expose-Headers:
+      - X-Request-ID
+      Openai-Organization:
+      - user-jtftkqrbreteg5pmdrfzchv6
+      Openai-Processing-Ms:
+      - '577'
+      Openai-Version:
+      - '2020-10-01'
+      X-Ratelimit-Limit-Requests:
+      - '500'
+      X-Ratelimit-Limit-Tokens:
+      - '30000'
+      X-Ratelimit-Remaining-Requests:
+      - '499'
+      X-Ratelimit-Remaining-Tokens:
+      - '29973'
+      X-Ratelimit-Reset-Requests:
+      - 120ms
+      X-Ratelimit-Reset-Tokens:
+      - 54ms
+      X-Request-Id:
+      - req_caf9470c326df83fe5038cc989906e1a
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Cf-Cache-Status:
+      - DYNAMIC
+      Set-Cookie:
+      - __cf_bm=rhhWRHxF_EcBCO1t32G7pOlpFvyRI_tqY3T6yoBGz3A-1742332973-1.0.1.1-9sDI5PEZcTpfgsc3XH9FsaoGQW1PG7TeZ8qsxPX9QJU_L9BelxpkH10tmmv8JzNEFmAah4rS67rUJ.XNV9w.IdxD88G130taadLCC1Xh2Po;
+        path=/; expires=Tue, 18-Mar-25 21:52:53 GMT; domain=.api.openai.com; HttpOnly;
+        Secure; SameSite=None
+      - _cfuvid=Tqj.jw1rpvD7xRtsKo_ZnblAV0TsnyxqTRBGes6Qy34-1742332973148-0.0.1.1-604800000;
+        path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
+      X-Content-Type-Options:
+      - nosniff
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 9227c9b5dc093ef5-BOG
+      Alt-Svc:
+      - h3=":443"; ma=86400
+    body:
+      encoding: ASCII-8BIT
+      string: |
+        {
+          "id": "chatcmpl-BCYgeT7y3HWfBtOISfndOwxVLzKXI",
+          "object": "chat.completion",
+          "created": 1742332972,
+          "model": "gpt-4o-2024-08-06",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "I can't provide real-time weather updates. For the most current weather information in New York, I recommend checking a reliable weather website or app.",
+                "refusal": null,
+                "annotations": []
+              },
+              "logprobs": null,
+              "finish_reason": "stop"
+            }
+          ],
+          "usage": {
+            "prompt_tokens": 16,
+            "completion_tokens": 29,
+            "total_tokens": 45,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "service_tier": "default",
+          "system_fingerprint": "fp_6ec83003ad"
+        }
+  recorded_at: Tue, 18 Mar 2025 21:22:52 GMT
+recorded_with: VCR 6.3.1

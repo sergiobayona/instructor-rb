@@ -57,7 +57,7 @@ module Instructor
       # @param model [Class] The response model class.
       # @return [Object] The processed response.
       def process_response(response, model)
-        parsed_response = Response.new(response).parse
+        parsed_response = Response.create(response).parse
         iterable? ? process_multiple_responses(parsed_response, model) : process_single_response(parsed_response, model)
       end
 

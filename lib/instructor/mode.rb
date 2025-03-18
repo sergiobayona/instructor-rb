@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ostruct'
-
 module Instructor
   # This module defines constants related to different modes of operation.
   # It provides options for tool behavior, function types, and JSON modes.
@@ -11,6 +9,8 @@ module Instructor
   module Mode
     STRUCTURED_OUTPUT = :structured_output
     FUNCTION_CALLING = :function_calling
+    TOOLS = %i[function auto required none].index_by(&:itself)
+    DEFAULT_TOOL_CHOICE = TOOLS[:function]
 
     def self.structured_output?
       Instructor.mode == STRUCTURED_OUTPUT
@@ -18,6 +18,10 @@ module Instructor
 
     def self.function_calling?
       Instructor.mode == FUNCTION_CALLING
+    end
+
+    def self.mode
+      Instructor.mode
     end
   end
 end
