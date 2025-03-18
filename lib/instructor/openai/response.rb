@@ -15,12 +15,9 @@ module Instructor
         end
       end
 
-      # The ToolResponse class represents the response received from the OpenAI API
-      # when using function calling mode. It takes the raw response and provides
-      # convenience methods to access the chat completions, tool calls, function
-      # responses, and parsed arguments.
-      class ToolResponse
-        # Initializes a new instance of the ToolResponse class.
+      # Base class for OpenAI API responses that contains common functionality
+      class BaseResponse
+        # Initializes a new instance with the OpenAI API response.
         #
         # @param response [Hash] The response received from the OpenAI API.
         def initialize(response)
@@ -34,6 +31,19 @@ module Instructor
           @response['choices']
         end
 
+        # Returns the refusal from the first chat completion.
+        #
+        # @return [String, nil] The refusal or nil if not found.
+        def refusal
+          chat_completions&.dig(0, 'message', 'refusal')
+        end
+      end
+
+      # The ToolResponse class represents the response received from the OpenAI API
+      # when using function calling mode. It takes the raw response and provides
+      # convenience methods to access the chat completions, tool calls, function
+      # responses, and parsed arguments.
+      class ToolResponse < BaseResponse
         # Returns the tool calls from the chat completions.
         #
         # @return [Hash, nil] The tool calls or nil if not found.
@@ -85,33 +95,12 @@ module Instructor
       # The StructuredResponse class represents the response received from the OpenAI API
       # when using structured output mode. It takes the raw response and provides
       # convenience methods to access the chat completions and parse the JSON content.
-      class StructuredResponse
-        # Initializes a new instance of the StructuredResponse class.
-        #
-        # @param response [Hash] The response received from the OpenAI API.
-        def initialize(response)
-          @response = response
-        end
-
-        # Returns the chat completions from the response.
-        #
-        # @return [Array] An array of chat completions.
-        def chat_completions
-          @response['choices']
-        end
-
+      class StructuredResponse < BaseResponse
         # Returns the content from the first chat completion.
         #
         # @return [String, nil] The content or nil if not found.
         def content
           chat_completions&.dig(0, 'message', 'content')
-        end
-
-        # Returns the refusal from the first chat completion.
-        #
-        # @return [String, nil] The refusal or nil if not found.
-        def refusal
-          chat_completions&.dig(0, 'message', 'refusal')
         end
 
         # Parses the content as JSON and returns the parsed data.

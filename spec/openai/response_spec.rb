@@ -23,6 +23,44 @@ RSpec.describe Instructor::OpenAI::Response do
     end
   end
 
+  describe Instructor::OpenAI::Response::BaseResponse do
+    subject(:response_object) { described_class.new(response) }
+
+    let(:response) do
+      { 'id' => 'chatcmpl-base',
+        'object' => 'chat.completion',
+        'created' => 1_712_940_147,
+        'choices' => [
+          { 'index' => 0,
+            'message' => {
+              'role' => 'assistant',
+              'refusal' => 'I cannot assist with that request'
+            },
+            'finish_reason' => 'stop' }
+        ] }
+    end
+
+    it 'returns chat completions' do
+      expect(response_object.chat_completions).to eq(response['choices'])
+    end
+
+    it 'returns refusal message' do
+      expect(response_object.refusal).to eq('I cannot assist with that request')
+    end
+
+    context 'with empty response' do
+      let(:response) { {} }
+
+      it 'handles missing choices gracefully' do
+        expect(response_object.chat_completions).to be_nil
+      end
+
+      it 'handles missing refusal gracefully' do
+        expect(response_object.refusal).to be_nil
+      end
+    end
+  end
+
   describe Instructor::OpenAI::Response::ToolResponse do
     subject(:response_object) { described_class.new(response) }
 
@@ -81,6 +119,83 @@ RSpec.describe Instructor::OpenAI::Response do
     it 'returns the first function response' do
       expect(response_object.function_response).to eq(response['choices'][0]['message']['tool_calls'][0]['function'])
     end
+
+    context 'with multiple function responses' do
+      let(:response) do
+        { 'id' => 'chatcmpl-multi',
+          'object' => 'chat.completion',
+          'created' => 1_712_940_147,
+          'choices' => [
+            { 'index' => 0,
+              'message' => {
+                'role' => 'assistant',
+                'content' => nil,
+                'tool_calls' => [
+                  {
+                    'id' => 'call_1',
+                    'type' => 'function',
+                    'function' => { 'name' => 'User1', 'arguments' => '{"name": "Alice", "age": 30}' }
+                  },
+                  {
+                    'id' => 'call_2',
+                    'type' => 'function',
+                    'function' => { 'name' => 'User2', 'arguments' => '{"name": "Bob", "age": 25}' }
+                  }
+                ]
+              },
+              'finish_reason' => 'tool_calls' }
+          ] }
+      end
+
+      it 'identifies multiple responses' do
+        expect(response_object.single_response?).to eq(false)
+      end
+
+      it 'returns all function responses' do
+        expect(response_object.function_responses.size).to eq(2)
+      end
+
+      it 'parses multiple responses correctly' do
+        expected_result = [
+          { 'name' => 'Alice', 'age' => 30 },
+          { 'name' => 'Bob', 'age' => 25 }
+        ]
+        expect(response_object.parse).to eq(expected_result)
+      end
+
+      it 'returns the correct function by name' do
+        expect(response_object.by_function_name('User2')).to eq('{"name": "Bob", "age": 25}')
+      end
+    end
+
+    context 'with invalid JSON in arguments' do
+      let(:response) do
+        { 'choices' => [
+          { 'message' => {
+            'tool_calls' => [
+              {
+                'function' => { 'name' => 'User', 'arguments' => '{invalid json}' }
+              }
+            ]
+          } }
+        ] }
+      end
+
+      it 'raises a JSON::ParserError when parsing invalid JSON' do
+        expect { response_object.parse }.to raise_error(JSON::ParserError)
+      end
+    end
+
+    context 'with empty response' do
+      let(:response) { {} }
+
+      it 'handles missing data gracefully' do
+        expect(response_object.tool_calls).to be_nil
+        expect(response_object.function_responses).to be_nil
+        expect(response_object.function_response).to be_nil
+        expect(response_object.single_response?).to eq(false)
+      end
+    end
   end
 
   describe Instructor::OpenAI::Response::StructuredResponse do
@@ -111,6 +226,29 @@ RSpec.describe Instructor::OpenAI::Response do
 
     it 'parses the response' do
       expect(response_object.parse).to eq('name' => 'Jason', 'age' => 25)
+    end
+
+    context 'with invalid JSON content' do
+      let(:response) do
+        { 'choices' => [
+          { 'message' => {
+            'content' => '{invalid json}'
+          } }
+        ] }
+      end
+
+      it 'returns nil when parsing invalid JSON' do
+        expect(response_object.parse).to be_nil
+      end
+    end
+
+    context 'with empty response' do
+      let(:response) { {} }
+
+      it 'handles missing content gracefully' do
+        expect(response_object.content).to be_nil
+        expect(response_object.parse).to be_nil
+      end
     end
   end
 end
