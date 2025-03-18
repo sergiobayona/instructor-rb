@@ -18,10 +18,10 @@ module Instructor
         return super(parameters:) if response_model.nil?
 
         model = determine_model(response_model)
-        if mode.structured_output?
+        if Instructor::OpenAI::Mode.structured_output?
           schema = build_schema(model)
           parameters = prepare_response_format(parameters, validation_context, schema)
-        elsif mode.function_calling?
+        elsif Instructor::OpenAI::Mode.function_calling?
           function = build_function(model)
           parameters = prepare_parameters(parameters, validation_context, function)
           tool_choice = resolve_tool_choice(tool_choice, function_name(function))
@@ -34,7 +34,7 @@ module Instructor
       end
 
       def mode
-        Instructor::Mode
+        Instructor::OpenAI.mode
       end
 
       # Processes the API response.

@@ -8,10 +8,12 @@ module Instructor
       # @param response [Hash] The response received from the OpenAI API
       # @return [ToolResponse, StructuredResponse] The appropriate response object
       def self.create(response)
-        if Instructor::Mode.structured_output?
+        if Instructor::OpenAI::Mode.structured_output?
           StructuredResponse.new(response)
-        else
+        elsif Instructor::OpenAI::Mode.function_calling?
           ToolResponse.new(response)
+        else
+          raise ArgumentError, 'Invalid mode'
         end
       end
 
