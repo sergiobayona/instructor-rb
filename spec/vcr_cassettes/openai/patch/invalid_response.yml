@@ -5,8 +5,8 @@ http_interactions:
     uri: https://api.openai.com/v1/chat/completions
     body:
       encoding: UTF-8
-      string: '{"model":"gpt-4o-2024-08-06","messages":[{"role":"user","content":"How
-        is the weather today in New York?"}]}'
+      string: '{"model":"gpt-4o-2024-08-06","messages":[{"role":"user","content":"Extract
+        Jason is 25 years old"}],"response_format":{"type":"json_schema","json_schema":{"name":"invalidmodel","schema":{"type":"object","properties":{"name":{"type":"string"},"age":{"type":"string"}},"additionalProperties":false,"required":["name","age"]},"strict":true}}}'
     headers:
       Content-Type:
       - application/json
@@ -24,7 +24,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 14 Mar 2025 20:55:28 GMT
+      - Tue, 18 Mar 2025 21:22:52 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -36,7 +36,7 @@ http_interactions:
       Openai-Organization:
       - user-jtftkqrbreteg5pmdrfzchv6
       Openai-Processing-Ms:
-      - '1049'
+      - '328'
       Openai-Version:
       - '2020-10-01'
       X-Ratelimit-Limit-Requests:
@@ -46,45 +46,45 @@ http_interactions:
       X-Ratelimit-Remaining-Requests:
       - '499'
       X-Ratelimit-Remaining-Tokens:
-      - '29973'
+      - '29975'
       X-Ratelimit-Reset-Requests:
       - 120ms
       X-Ratelimit-Reset-Tokens:
-      - 54ms
+      - 50ms
       X-Request-Id:
-      - req_34ff93e0105f13c067f96e4b167cef8d
+      - req_0ac77e9139c1399fb5459f36c2b5dd29
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=r7jGPy3FyICLELP5zRk2Pfdl7W1J0Y_17vpt_q9pIwo-1741985728-1.0.1.1-4uHU0PxPQs5zXNW0ywwKVROYQBI0xJXuGmZ8PDCBnJ9NJv32mlSWWJQCNQIHfx2dFmbmbvmAZ.77wlL1asIoFaeGeKf6KGUh7aLA9BJvIxo;
-        path=/; expires=Fri, 14-Mar-25 21:25:28 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=jLOIw.um8lBlCUnoaivH8WB0wsYD4imp2AJ8Dx_Ri7s-1742332972-1.0.1.1-KU9V82Ssxxoh5i9LFGBlxBjQPIEqIzPx9rBuziIbUoLLxiC3J9Rj9_PWlSY0K.cVbFLv4lO2u0M9k2EunRenVPhFweJItsSbgpH_.JgREIA;
+        path=/; expires=Tue, 18-Mar-25 21:52:52 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=ofAH5iFZ3XJwieKG.3DEsrnCBT3wctDWNiGeKILBUco-1741985728425-0.0.1.1-604800000;
+      - _cfuvid=NCAaVGRviZHkANy_PwIF2VuHhTnzdwkYA4sEnL8GYqo-1742332972363-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       X-Content-Type-Options:
       - nosniff
       Server:
       - cloudflare
       Cf-Ray:
-      - 9206ac0b39743713-MIA
+      - 9227c9b23cbfc74c-MDE
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |
         {
-          "id": "chatcmpl-BB6LvbeX0HHHYqiLQgwSdWHHgSw05",
+          "id": "chatcmpl-BCYgekWMsL6dPWfSW21NCmofNmV4C",
           "object": "chat.completion",
-          "created": 1741985727,
+          "created": 1742332972,
           "model": "gpt-4o-2024-08-06",
           "choices": [
             {
               "index": 0,
               "message": {
                 "role": "assistant",
-                "content": "I'm sorry, but I can't provide real-time information such as today's weather. You may want to check a reliable weather website or app for accurate and up-to-date weather forecasts in New York.",
+                "content": "{\"name\":\"Jason\",\"age\":\"25 years old\"}",
                 "refusal": null,
                 "annotations": []
               },
@@ -93,9 +93,9 @@ http_interactions:
             }
           ],
           "usage": {
-            "prompt_tokens": 16,
-            "completion_tokens": 39,
-            "total_tokens": 55,
+            "prompt_tokens": 51,
+            "completion_tokens": 12,
+            "total_tokens": 63,
             "prompt_tokens_details": {
               "cached_tokens": 0,
               "audio_tokens": 0
@@ -108,7 +108,7 @@ http_interactions:
             }
           },
           "service_tier": "default",
-          "system_fingerprint": "fp_f9f4fb6dbf"
+          "system_fingerprint": "fp_90d33c15d4"
         }
-  recorded_at: Fri, 14 Mar 2025 20:55:28 GMT
+  recorded_at: Tue, 18 Mar 2025 21:22:52 GMT
 recorded_with: VCR 6.3.1

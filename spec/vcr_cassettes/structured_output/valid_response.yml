@@ -5,8 +5,8 @@ http_interactions:
     uri: https://api.openai.com/v1/chat/completions
     body:
       encoding: UTF-8
-      string: '{"model":"gpt-4o-2024-08-06","messages":[{"role":"user","content":"Extract
-        Jason is 25 years old"}],"response_format":{"type":"json_schema","json_schema":{"name":"someuser","schema":{"type":"object","title":"SomeUser","properties":{"name":{"type":"string"},"age":{"type":"integer"}},"additionalProperties":false,"required":["name","age"]},"strict":true}}}'
+      string: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Extract
+        Jason is 25 years old"}],"response_format":{"type":"json_schema","json_schema":{"name":"user","schema":{"type":"object","properties":{"name":{"type":"string"},"age":{"type":"integer"}},"additionalProperties":false,"required":["name","age"]},"strict":true}}}'
     headers:
       Content-Type:
       - application/json
@@ -24,7 +24,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 14 Mar 2025 19:49:58 GMT
+      - Fri, 28 Feb 2025 23:08:27 GMT
       Content-Type:
       - application/json
       Transfer-Encoding:
@@ -36,66 +36,65 @@ http_interactions:
       Openai-Organization:
       - user-jtftkqrbreteg5pmdrfzchv6
       Openai-Processing-Ms:
-      - '313'
+      - '281'
       Openai-Version:
       - '2020-10-01'
       X-Ratelimit-Limit-Requests:
-      - '500'
+      - '10000'
       X-Ratelimit-Limit-Tokens:
-      - '30000'
+      - '200000'
       X-Ratelimit-Remaining-Requests:
-      - '499'
+      - '9999'
       X-Ratelimit-Remaining-Tokens:
-      - '29975'
+      - '199975'
       X-Ratelimit-Reset-Requests:
-      - 120ms
+      - 8.64s
       X-Ratelimit-Reset-Tokens:
-      - 50ms
+      - 7ms
       X-Request-Id:
-      - req_c102d24a3c7650991894b08285fd95a7
+      - req_0b92fd5ae7ccd2be05637015a8ce9fa1
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Cf-Cache-Status:
       - DYNAMIC
       Set-Cookie:
-      - __cf_bm=1I9jXW1Dpn4CmvYWq13K2QKLfDZ9cS8okJAn4N28zaM-1741981798-1.0.1.1-6syLbEdawwZdE5MC_3uP5secJuVfeFJ4.O1ce5nan7_m_GfoZ03IzlMEosTQqI09igxUkS8eJ508DxMHXnuQf9IM_q92ezypPxCZok4WVRk;
-        path=/; expires=Fri, 14-Mar-25 20:19:58 GMT; domain=.api.openai.com; HttpOnly;
+      - __cf_bm=DRMn3lgC8EPh_7S2_WrfEFJftT49G5s9PrtX6WSSOy0-1740784107-1.0.1.1-ZcZcyHYRS2UjsO35f9W5U4QHvdPcyOl1o8jbRg8Im2pBhMChDLxmnFS7acweilp5RM9Qvi10djDuEd1JDtHg4wzfAIeav40vfZbtM0TYzRA;
+        path=/; expires=Fri, 28-Feb-25 23:38:27 GMT; domain=.api.openai.com; HttpOnly;
         Secure; SameSite=None
-      - _cfuvid=4ZTPC9OrVHzHD_yfwx3.mpdT8zElixsVHfjGXe0sRL8-1741981798008-0.0.1.1-604800000;
+      - _cfuvid=sHphPLUKOQ26B2rlXWdj7ZzxEWRtpovwLPQ2UPA3fP0-1740784107843-0.0.1.1-604800000;
         path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None
       X-Content-Type-Options:
       - nosniff
       Server:
       - cloudflare
       Cf-Ray:
-      - 92064c1aea103ed2-BOG
+      - 9194139d79cf3edc-BOG
       Alt-Svc:
       - h3=":443"; ma=86400
     body:
       encoding: ASCII-8BIT
       string: |
         {
-          "id": "chatcmpl-BB5KXgpeLLVzwvoVJhi2WLDQVFWQD",
+          "id": "chatcmpl-B63kx9ismkjyhtAYtFjqbdY1cU4h3",
           "object": "chat.completion",
-          "created": 1741981797,
-          "model": "gpt-4o-2024-08-06",
+          "created": 1740784107,
+          "model": "gpt-4o-mini-2024-07-18",
           "choices": [
             {
               "index": 0,
               "message": {
                 "role": "assistant",
                 "content": "{\"name\":\"Jason\",\"age\":25}",
-                "refusal": null,
-                "annotations": []
+                "refusal": null
               },
               "logprobs": null,
               "finish_reason": "stop"
             }
           ],
           "usage": {
-            "prompt_tokens": 56,
+            "prompt_tokens": 49,
             "completion_tokens": 10,
-            "total_tokens": 66,
+            "total_tokens": 59,
             "prompt_tokens_details": {
               "cached_tokens": 0,
               "audio_tokens": 0
@@ -108,7 +107,7 @@ http_interactions:
             }
           },
           "service_tier": "default",
-          "system_fingerprint": "fp_eb9dce56a8"
+          "system_fingerprint": "fp_06737a9306"
         }
-  recorded_at: Fri, 14 Mar 2025 19:49:57 GMT
+  recorded_at: Fri, 28 Feb 2025 23:08:27 GMT
 recorded_with: VCR 6.3.1

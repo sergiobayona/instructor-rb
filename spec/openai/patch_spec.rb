@@ -29,6 +29,11 @@ RSpec.describe Instructor::OpenAI::Patch do
     expect(patched_client).to eq(OpenAI::Client)
   end
 
+  it 'is in structured output mode by default' do
+    client = patched_client.new
+    expect(client.mode.mode).to eq(:structured_output)
+  end
+
   context 'when generating description' do
     let(:client) { patched_client.new }
 
@@ -91,8 +96,10 @@ RSpec.describe Instructor::OpenAI::Patch do
         expect(client.generate_function_name(model)).to eq('user')
       end
     end
+  end
 
-    it 'returns an object with the expected valid attribute values', vcr: 'openai/patching_spec/valid_response' do
+  context 'in structured output mode' do
+    it 'returns an object with the expected valid attribute values', vcr: 'openai/patch/valid_response' do
       client = patched_client.new
 
       user = client.chat(
@@ -106,28 +113,52 @@ RSpec.describe Instructor::OpenAI::Patch do
       expect(user.name).to eq('Jason')
       expect(user.age).to eq(25)
     end
+
+    context 'with validation context' do
+      let(:client) { patched_client.new }
+      let(:parameters) do
+        {
+          model: 'gpt-4o-2024-08-06',
+          messages: [
+            {
+              role: 'user',
+              content: 'Answer the question: %<question>s with the text chunk: %<text_chunk>s'
+            }
+          ]
+        }
+      end
+
+      it 'returns an object with the expected valid attribute values', vcr: 'openai/patch/with_validation_context' do
+        user = client.chat(
+          parameters:,
+          response_model: user_model,
+          validation_context: { question: 'What is your name and age?',
+                                text_chunk: 'my name is Jason and I turned 25 years old yesterday' }
+        )
+
+        expect(user.name).to eq('Jason')
+        expect(user.age).to eq(25)
+      end
+    end
   end
 
-  context 'with validation context' do
-    let(:client) { patched_client.new }
-    let(:parameters) do
-      {
-        model: 'gpt-4o-2024-08-06',
-        messages: [
-          {
-            role: 'user',
-            content: 'Answer the question: %<question>s with the text chunk: %<text_chunk>s'
-          }
-        ]
-      }
+  context 'in function calling mode' do
+    subject(:patched_client) { Instructor.from_openai(OpenAI::Client, mode: :function_calling) }
+
+    it 'is in function calling mode' do
+      client = patched_client.new
+      expect(client.mode.mode).to eq(:function_calling)
     end
 
-    it 'returns an object with the expected valid attribute values', vcr: 'openai/patching_spec/with_validation_context' do
+    it 'returns an object with the expected valid attribute values', vcr: 'openai/patch/valid_function_calling_response' do
+      client = patched_client.new
+
       user = client.chat(
-        parameters:,
-        response_model: user_model,
-        validation_context: { question: 'What is your name and age?',
-                              text_chunk: 'my name is Jason and I turned 25 years old yesterday' }
+        parameters: {
+          model: 'gpt-4o-2024-08-06',
+          messages: [{ role: 'user', content: 'Extract Jason is 25 years old' }]
+        },
+        response_model: user_model
       )
 
       expect(user.name).to eq('Jason')
@@ -159,15 +190,15 @@ RSpec.describe Instructor::OpenAI::Patch do
       }
     end
 
-    it 'raises an argument error when the model resfuses to respond', vcr: 'openai/patching_spec/invalid_response' do
+    it 'raises an argument error when the model resfuses to respond', vcr: 'openai/patch/invalid_response' do
       expect do
         client.chat(parameters:, response_model: invalid_model)
       end.to raise_error(ArgumentError, "I'm sorry, I can't assist with that request.")
     end
   end
 
-  describe 'when the client is used ia a standard manner' do
-    it 'does not raise an error when the client is used in a standard manner', vcr: 'openai/patching_spec/standard_usage' do
+  describe 'when the client is used in standard chat mode (not function calling)' do
+    it 'does not raise an error when the client is used in a standard manner', vcr: 'openai/patch/standard_usage' do
       response = patched_client.new.chat(
         parameters: {
           model: 'gpt-4o-2024-08-06',

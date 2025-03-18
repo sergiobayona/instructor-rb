@@ -12,10 +12,9 @@ module Instructor
       #
       # @param parameters [Hash] The parameters for the chat request as expected by the OpenAI client.
       # @param response_model [Class] The response model class.
-      # @param max_retries [Integer] The maximum number of retries. Default is 0.
       # @param validation_context [Hash] The validation context for the parameters. Optional.
       # @return [Object] The processed response.
-      def chat(parameters:, response_model: nil, max_retries: 0, validation_context: nil)
+      def chat(parameters:, response_model: nil, tool_choice: :auto, validation_context: nil)
         return super(parameters:) if response_model.nil?
 
         model = determine_model(response_model)
@@ -25,7 +24,7 @@ module Instructor
         elsif mode.function_calling?
           function = build_function(model)
           parameters = prepare_parameters(parameters, validation_context, function)
-          tool_choice = resolve_tool_choice(function_name(function))
+          tool_choice = resolve_tool_choice(tool_choice, function_name(function))
           parameters.merge!(tool_choice:) if tool_choice
         else
           raise ArgumentError, 'Invalid mode'
@@ -57,17 +56,17 @@ module Instructor
         function[:function][:name]
       end
 
-      def resolve_tool_choice(function_name)
-        case Instructor.mode
-        when Instructor::Mode::TOOLS.function
-          { type: 'function', function: { name: function_name } }
-        when Instructor::Mode::TOOLS.auto
-          'auto'
-        when Instructor::Mode::TOOLS.required
-          'required'
-        when Instructor::Mode::TOOLS.none
-          'none'
-        end
+      def resolve_tool_choice(tool_choice, function_name)
+        string_choices = {
+          auto: 'auto',
+          required: 'required',
+          none: 'none'
+        }
+
+        return string_choices[tool_choice] if string_choices.key?(tool_choice)
+
+        # For :force or any other value, return the function hash
+        { type: 'function', function: { name: function_name } }
       end
 
       # Builds the function details for the API request.
