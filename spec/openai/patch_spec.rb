@@ -31,7 +31,7 @@ RSpec.describe Instructor::OpenAI::Patch do
 
   it 'is in structured output mode by default' do
     client = patched_client.new
-    expect(client.mode.mode).to eq(:structured_output)
+    expect(client.mode).to eq(:structured_output)
   end
 
   context 'when generating description' do
@@ -147,7 +147,7 @@ RSpec.describe Instructor::OpenAI::Patch do
 
     it 'is in function calling mode' do
       client = patched_client.new
-      expect(client.mode.mode).to eq(:function_calling)
+      expect(client.mode).to eq(:function_calling)
     end
 
     it 'returns an object with the expected valid attribute values', vcr: 'openai/patch/valid_function_calling_response' do

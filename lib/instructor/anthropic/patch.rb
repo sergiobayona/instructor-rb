@@ -20,17 +20,15 @@ module Instructor
       def messages(parameters:, response_model: nil, max_retries: 0, validation_context: nil)
         return super(parameters:) if response_model.nil?
 
-        with_retries(max_retries, [JSON::ParserError, Instructor::ValidationError, Faraday::ParsingError]) do
-          model = determine_model(response_model)
-          function = build_function(model)
-          set_max_tokens(parameters)
-          parameters = prepare_parameters(parameters, validation_context, function)
-          set_extra_headers
-          tool_choice = resolve_tool_choice(function_name(function))
-          parameters.merge!(tool_choice:) if tool_choice
-          response = super(parameters:)
-          process_response(response, model)
-        end
+        model = determine_model(response_model)
+        function = build_function(model)
+        set_max_tokens(parameters)
+        parameters = prepare_parameters(parameters, validation_context, function)
+        set_extra_headers
+        tool_choice = resolve_tool_choice(function_name(function))
+        parameters.merge!(tool_choice:) if tool_choice
+        response = super(parameters:)
+        process_response(response, model)
       end
 
       private
