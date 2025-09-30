@@ -8,13 +8,34 @@ module Instructor
       # @param response [Hash] The response received from the OpenAI API
       # @return [ToolResponse, StructuredResponse] The appropriate response object
       def self.create(response)
-        if Instructor::OpenAI::Mode.structured_output?
+        current_mode = Instructor::OpenAI.mode
+
+        if structured_output_mode?(current_mode)
           StructuredResponse.new(response)
-        elsif Instructor::OpenAI::Mode.function_calling?
+        elsif tool_calling_mode?(current_mode)
           ToolResponse.new(response)
         else
-          raise ArgumentError, 'Invalid mode'
+          raise ArgumentError, "Invalid mode: #{current_mode}"
         end
+      end
+
+      # Checks if the current mode is a structured output mode
+      #
+      # @param mode [Symbol] The mode to check
+      # @return [Boolean] true if mode uses structured output (response_format)
+      def self.structured_output_mode?(mode)
+        mode == Instructor::Mode::TOOLS_STRICT ||
+          mode == Instructor::Mode::JSON_SCHEMA ||
+          mode == :structured_output
+      end
+
+      # Checks if the current mode is a tool calling mode
+      #
+      # @param mode [Symbol] The mode to check
+      # @return [Boolean] true if mode uses tool calling
+      def self.tool_calling_mode?(mode)
+        Instructor::Mode.tool_mode?(mode) ||
+          mode == :function_calling
       end
 
       # Base class for OpenAI API responses that contains common functionality

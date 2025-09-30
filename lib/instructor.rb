@@ -5,6 +5,7 @@ require 'anthropic'
 require 'easy_talk'
 require 'active_support/all'
 require_relative 'instructor/version'
+require_relative 'instructor/mode'
 require_relative 'instructor/openai/patch'
 require_relative 'instructor/openai/response'
 require_relative 'instructor/openai/mode'
@@ -25,9 +26,15 @@ module Instructor
   # - Accepts a validation_context argument
   #
   # @param openai_client [OpenAI::Client] The OpenAI client to be patched.
-  # @param mode [Symbol] The mode to be used. Default is `Instructor::Mode::TOOLS.function`.
+  # @param mode [Symbol] The mode to be used. Default is `Instructor::Mode::TOOLS_STRICT`.
   # @return [OpenAI::Client] The patched OpenAI client.
-  def self.from_openai(openai_client, mode: :structured_output)
+  # @example Using tools strict mode (default)
+  #   client = Instructor.from_openai(openai_client)
+  # @example Using standard tools mode
+  #   client = Instructor.from_openai(openai_client, mode: Instructor::Mode::TOOLS)
+  # @example Using JSON mode
+  #   client = Instructor.from_openai(openai_client, mode: Instructor::Mode::JSON)
+  def self.from_openai(openai_client, mode: Instructor::Mode::TOOLS_STRICT)
     Instructor::OpenAI.mode = mode
     openai_client.prepend(Instructor::OpenAI::Patch)
   end

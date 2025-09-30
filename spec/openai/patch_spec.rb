@@ -29,9 +29,9 @@ RSpec.describe Instructor::OpenAI::Patch do
     expect(patched_client).to eq(OpenAI::Client)
   end
 
-  it 'is in structured output mode by default' do
+  it 'is in TOOLS_STRICT mode by default' do
     client = patched_client.new
-    expect(client.mode).to eq(:structured_output)
+    expect(client.mode).to eq(Instructor::Mode::TOOLS_STRICT)
   end
 
   context 'when generating description' do

@@ -6,8 +6,10 @@ RSpec.describe Instructor::OpenAI::Response do
   describe '.create' do
     let(:response) { { 'choices' => [] } }
 
+    after { Instructor::OpenAI.mode = nil }
+
     context 'when in structured output mode' do
-      before { allow(Instructor::Mode).to receive(:structured_output?).and_return(true) }
+      before { Instructor::OpenAI.mode = Instructor::Mode::TOOLS_STRICT }
 
       it 'returns a StructuredResponse instance' do
         expect(described_class.create(response)).to be_a(described_class::StructuredResponse)
@@ -15,9 +17,25 @@ RSpec.describe Instructor::OpenAI::Response do
     end
 
     context 'when in function calling mode' do
-      before { allow(Instructor::Mode).to receive(:structured_output?).and_return(false) }
+      before { Instructor::OpenAI.mode = Instructor::Mode::TOOLS }
 
       it 'returns a ToolResponse instance' do
+        expect(described_class.create(response)).to be_a(described_class::ToolResponse)
+      end
+    end
+
+    context 'when in legacy structured output mode' do
+      before { Instructor::OpenAI.mode = :structured_output }
+
+      it 'returns a StructuredResponse instance for backward compatibility' do
+        expect(described_class.create(response)).to be_a(described_class::StructuredResponse)
+      end
+    end
+
+    context 'when in legacy function calling mode' do
+      before { Instructor::OpenAI.mode = :function_calling }
+
+      it 'returns a ToolResponse instance for backward compatibility' do
         expect(described_class.create(response)).to be_a(described_class::ToolResponse)
       end
     end

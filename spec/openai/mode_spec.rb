@@ -15,8 +15,18 @@ RSpec.describe Instructor::OpenAI do
       expect(described_class.mode).to eq(:test_mode)
     end
 
-    it 'returns structured output when mode is not set' do
-      expect(described_class.mode).to eq(:structured_output)
+    it 'returns TOOLS_STRICT when mode is not set' do
+      expect(described_class.mode).to eq(Instructor::Mode::TOOLS_STRICT)
+    end
+
+    it 'accepts Instructor::Mode constants' do
+      described_class.mode = Instructor::Mode::TOOLS
+      expect(described_class.mode).to eq(Instructor::Mode::TOOLS)
+    end
+
+    it 'accepts Instructor::Mode JSON modes' do
+      described_class.mode = Instructor::Mode::JSON
+      expect(described_class.mode).to eq(Instructor::Mode::JSON)
     end
   end
 end
@@ -27,45 +37,51 @@ RSpec.describe Instructor::OpenAI::Mode do
     Instructor::OpenAI.mode = nil
   end
 
-  describe '.structured_output?' do
-    it 'returns true when mode is set to STRUCTURED_OUTPUT' do
-      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::STRUCTURED_OUTPUT
-      expect(described_class.structured_output?).to be true
-    end
-
-    it 'returns false when mode is set to something else' do
-      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::FUNCTION_CALLING
-      expect(described_class.structured_output?).to be false
-    end
-
-    it 'returns true when mode is not set' do
-      expect(described_class.structured_output?).to be true
-    end
-  end
-
-  describe '.function_calling?' do
-    it 'returns true when mode is set to FUNCTION_CALLING' do
-      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::FUNCTION_CALLING
-      expect(described_class.function_calling?).to be true
-    end
-
-    it 'returns false when mode is set to something else' do
-      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::STRUCTURED_OUTPUT
-      expect(described_class.function_calling?).to be false
-    end
-
-    it 'returns true when mode is not set' do
-      expect(described_class.function_calling?).to be true
-    end
-  end
-
-  describe 'constants' do
-    it 'defines STRUCTURED_OUTPUT constant' do
+  describe 'deprecated constants' do
+    it 'defines STRUCTURED_OUTPUT constant for backward compatibility' do
       expect(described_class::STRUCTURED_OUTPUT).to eq(:structured_output)
     end
 
-    it 'defines FUNCTION_CALLING constant' do
+    it 'defines FUNCTION_CALLING constant for backward compatibility' do
       expect(described_class::FUNCTION_CALLING).to eq(:function_calling)
+    end
+  end
+
+  describe '.structured_output? (deprecated)' do
+    it 'returns true when mode is set to STRUCTURED_OUTPUT' do
+      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::STRUCTURED_OUTPUT
+      expect { expect(described_class.structured_output?).to be true }
+        .to output(/DEPRECATION WARNING/i).to_stderr
+    end
+
+    it 'returns false when mode is set to something else' do
+      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::FUNCTION_CALLING
+      expect { expect(described_class.structured_output?).to be false }
+        .to output(/DEPRECATION WARNING/i).to_stderr
+    end
+
+    it 'warns about deprecation' do
+      expect { described_class.structured_output? }
+        .to output(/DEPRECATION WARNING.*TOOLS_STRICT/i).to_stderr
+    end
+  end
+
+  describe '.function_calling? (deprecated)' do
+    it 'returns true when mode is set to FUNCTION_CALLING' do
+      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::FUNCTION_CALLING
+      expect { expect(described_class.function_calling?).to be true }
+        .to output(/DEPRECATION WARNING/i).to_stderr
+    end
+
+    it 'returns false when mode is set to something else' do
+      Instructor::OpenAI.mode = Instructor::OpenAI::Mode::STRUCTURED_OUTPUT
+      expect { expect(described_class.function_calling?).to be false }
+        .to output(/DEPRECATION WARNING/i).to_stderr
+    end
+
+    it 'warns about deprecation' do
+      expect { described_class.function_calling? }
+        .to output(/DEPRECATION WARNING.*TOOLS/i).to_stderr
     end
   end
 end

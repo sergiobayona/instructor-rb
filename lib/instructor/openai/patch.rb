@@ -18,16 +18,20 @@ module Instructor
         return super(parameters:) if response_model.nil?
 
         model = determine_model(response_model)
-        if Instructor::OpenAI::Mode.structured_output?
+        current_mode = Instructor::OpenAI.mode
+
+        # Handle structured output modes (TOOLS_STRICT, JSON_SCHEMA, etc.)
+        if structured_output_mode?(current_mode)
           schema = build_schema(model)
           parameters = prepare_response_format(parameters, validation_context, schema)
-        elsif Instructor::OpenAI::Mode.function_calling?
+        # Handle tool calling modes (TOOLS, PARALLEL_TOOLS, FUNCTIONS, etc.)
+        elsif tool_calling_mode?(current_mode)
           function = build_function(model)
           parameters = prepare_parameters(parameters, validation_context, function)
           tool_choice = resolve_tool_choice(tool_choice, function_name(function))
           parameters.merge!(tool_choice:) if tool_choice
         else
-          raise ArgumentError, 'Invalid mode'
+          raise ArgumentError, "Invalid mode: #{current_mode}"
         end
         response = super(parameters:)
         process_response(response, model)
@@ -51,6 +55,27 @@ module Instructor
       end
 
       private
+
+      # Checks if the current mode is a structured output mode
+      #
+      # @param mode [Symbol] The mode to check
+      # @return [Boolean] true if mode uses structured output (response_format)
+      def structured_output_mode?(mode)
+        # Support both new modes and legacy :structured_output symbol
+        mode == Instructor::Mode::TOOLS_STRICT ||
+          mode == Instructor::Mode::JSON_SCHEMA ||
+          mode == :structured_output
+      end
+
+      # Checks if the current mode is a tool calling mode
+      #
+      # @param mode [Symbol] The mode to check
+      # @return [Boolean] true if mode uses tool calling
+      def tool_calling_mode?(mode)
+        # Support both new modes and legacy :function_calling symbol
+        Instructor::Mode.tool_mode?(mode) ||
+          mode == :function_calling
+      end
 
       def function_name(function)
         function[:function][:name]

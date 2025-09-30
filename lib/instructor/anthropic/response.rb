@@ -2,13 +2,21 @@
 
 module Instructor
   module Anthropic
-    # The Response class represents the response received from the OpenAI API.
+    # The Response class represents the response received from the Anthropic API.
     # It takes the raw response and provides convenience methods to access the chat completions,
     # tool calls, function responses, and parsed arguments.
     class Response
+      # Factory method to create a Response instance
+      #
+      # @param response [Hash] The response received from the Anthropic API
+      # @return [Response] A new Response instance
+      def self.create(response)
+        new(response)
+      end
+
       # Initializes a new instance of the Response class.
       #
-      # @param response [Hash] The response received from the OpenAI API.
+      # @param response [Hash] The response received from the Anthropic API.
       def initialize(response)
         @response = response
       end

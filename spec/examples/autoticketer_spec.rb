@@ -8,7 +8,7 @@ RSpec.describe 'Auto-ticketer' do
     c.include AutoticketerModels
   end
 
-  let(:client) { Instructor.from_openai(OpenAI::Client).new }
+  let(:client) { Instructor.from_openai(OpenAI::Client, mode: :function_calling).new }
 
   let(:data) do
     <<~DATA
