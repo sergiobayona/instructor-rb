@@ -90,8 +90,8 @@ http_interactions:
               "index": 0,
               "message": {
                 "role": "assistant",
-                "content": "{\"name\":\"Jason\",\"age\":\"25\"}",
-                "refusal": null,
+                "content": null,
+                "refusal": "I'm sorry, I can't assist with that request.",
                 "annotations": []
               },
               "logprobs": null,
