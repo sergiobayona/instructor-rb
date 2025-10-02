@@ -22,7 +22,7 @@ RSpec.describe 'running an Anthropic function call' do
 
   let(:parameters) do
     {
-      model: 'claude-3-opus-20240229',
+      model: 'claude-sonnet-4-20250514',
       messages: [{ role: 'user', content: 'Extract Jason is 25 years old' }]
     }
   end
