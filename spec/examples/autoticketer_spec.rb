@@ -62,52 +62,56 @@ RSpec.describe 'Auto-ticketer' do
 
     expect(result.as_json).to include_json(
       {
-        "items":[
-           {
-              "id":1,
-              "name":"Improve Authentication System",
-              "description":"Work on revamping the front-end and optimizing the back-end of the authentication system.",
-              "priority":"High",
-              "assignees":[
-                 "Bob"
-              ],
-              "subtasks":[
-                 {
-                    "id":11,
-                    "name":"Revamp Front-end of Authentication System"
-                 },
-                 {
-                    "id":12,
-                    "name":"Optimize Back-end of Authentication System"
-                 }
-              ]
-           },
-           {
-              "id":2,
-              "name":"Integrate Authentication System with New Billing System",
-              "description":"Integrate the improved authentication system with the new billing system.",
-              "priority":"Medium",
-              "assignees":[
-                 "Bob"
-              ],
-              "dependencies":[
-                 1
-              ]
-           },
-           {
-              "id":3,
-              "name":"Update User Documentation",
-              "description":"Update user documentation to reflect changes in authentication and billing systems.",
-              "priority":"Low",
-              "assignees":[
-                 "Carol"
-              ],
-              "dependencies":[
-                 11
-              ]
-           }
-        ]
-     }
+      "items": [
+         {
+            "id": 1,
+            "name": "Improve Authentication System",
+            "description": "Work on front-end revamp and back-end optimization for the authentication system",
+            "priority": "High",
+            "assignees": [
+            "Bob",
+            "Carol"
+            ],
+            "subtasks": [
+            {
+               "id": 2,
+               "name": "Front-end Revamp"
+            },
+            {
+               "id": 3,
+               "name": "Back-end Optimization"
+            }
+            ],
+            "dependencies": nil
+         },
+         {
+            "id": 4,
+            "name": "Integrate Authentication with Billing System",
+            "description": "Integrate the improved authentication system with the new billing system",
+            "priority": "Medium",
+            "assignees": [
+            "Bob"
+            ],
+            "subtasks": nil,
+            "dependencies": [
+            1
+            ]
+         },
+         {
+            "id": 5,
+            "name": "Update User Documentation",
+            "description": "Update user documentation to reflect changes in authentication and billing systems",
+            "priority": "Low",
+            "assignees": [
+            "Carol"
+            ],
+            "subtasks": nil,
+            "dependencies": [
+            2
+            ]
+         }
+      ]
+      }
     )
   end
 end
