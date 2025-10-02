@@ -29,7 +29,7 @@ RSpec.describe 'running an OpenAI function call' do
 
   let(:response_model) { user_model }
 
-  it 'returns a single object with the expected valid attribute values', vcr: 'basic_spec/valid_response' do
+  it 'returns a single object with the expected valid attribute values', vcr: 'features/openai/basic_spec/valid_response' do
     user = client.chat(parameters:, response_model:)
 
     expect(user.name).to eq('Jason')
