@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '>= 6.0'
   spec.add_dependency 'easy_talk', '~> 2'
-  spec.add_dependency 'ruby-anthropic"', '~> 0.4'
+  spec.add_dependency 'ruby-anthropic', '~> 0.4'
   spec.add_dependency 'ruby-openai', '~> 8'
   spec.add_development_dependency 'pry-byebug', '~> 3.10'
   spec.add_development_dependency 'rake', '~> 13.1'
