@@ -80,6 +80,6 @@ http_interactions:
       - 98863fe2ee4fb6f2-BOG
     body:
       encoding: ASCII-8BIT
-      string: '{"id":"msg_018K2FPihpHjeeH4pHEEJFMu","type":"message","role":"assistant","model":"claude-3-opus-20240229","content":[{"type":"tool_use","id":"toolu_01QqqJm7JF5evuaWrytuMye4","name":"invalidmodel","input":{"name":"Jason","age":25}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":397,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":50,"service_tier":"standard"}}'
+      string: '{"id":"msg_018K2FPihpHjeeH4pHEEJFMu","type":"message","role":"assistant","model":"claude-3-opus-20240229","content":[{"type":"tool_use","id":"toolu_01QqqJm7JF5evuaWrytuMye4","name":"invalidmodel","input":{"name":"Jason","age":""}}],"stop_reason":"tool_use","stop_sequence":null,"usage":{"input_tokens":397,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"output_tokens":50,"service_tier":"standard"}}'
   recorded_at: Thu, 02 Oct 2025 18:26:43 GMT
 recorded_with: VCR 6.3.1
